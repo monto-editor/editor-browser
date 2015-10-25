@@ -142,7 +142,7 @@ var Sink = (function () {
                         '<td class="mid-align">' +
                         '<div class="checkbox checkbox-primary">' +
                         '<input id="%s" type="checkbox" class="discoverOption styled" %s>' +
-                        '<label for="%s">%s</label>' +
+                        '<label for="%s"></label>' +
                         '</div>' +
                         '</td>' +
                         '<td class="mid-align">%s</td>' +
@@ -150,8 +150,8 @@ var Sink = (function () {
                         '<td class="mid-align">%s</td>' +
                         '<td class="mid-align">%s</td>' +
                         '</tr>'
-                        , service.service_id, service.service_id, checked, service.service_id, service.service_id,
-                        service.label, service.description, service.language, service.product));
+                        , service.service_id, service.service_id, checked, service.service_id,
+                        service.language, service.product, service.label, service.description));
                 }
             } else {
                 $('#row-' + service.service_id).remove();
@@ -340,6 +340,9 @@ var Sink = (function () {
         },
         triggerAll: function () {
             for (var product in triggerFunction) {
+                if (product === 'completions') {
+                    continue;
+                }
                 triggerFunction[product].forEach(function (func) {
                     func();
                 });
