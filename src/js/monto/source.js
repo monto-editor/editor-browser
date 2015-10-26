@@ -1,5 +1,19 @@
 var Source = (function () {
-    var src = new WebSocket('ws://localhost:5002/');
+    var src;
+    try {
+        src = new WebSocket('ws://localhost:5002/');
+    } catch (e) {
+        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
+        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+    }
+    src.onerror = function() {
+        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
+        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+    };
+    src.onclose = function() {
+        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
+        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+    };
 
     var lineSizes = [];
 
