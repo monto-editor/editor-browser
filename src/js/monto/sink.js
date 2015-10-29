@@ -127,10 +127,20 @@ var Sink = (function () {
             if (optionLanguage === 'all' || service.language === optionLanguage) {
                 var tr = $('#row-' + service.service_id);
                 if (tr.length === 0) {
-                    var serviceStr = localStorage.getItem('selectedServices');
-                    var services = (serviceStr === '' || serviceStr === null || serviceStr === undefined) ? [] : JSON.parse(serviceStr);
+                    var services = localStorage.getItem('selectedServices');
+                    services = (services === '' || services === null || services === undefined) ? [] : JSON.parse(services);
+                    var knownServices = localStorage.getItem('knownServices');
+                    knownServices = (knownServices === '' || knownServices === null || knownServices === undefined) ? [] : JSON.parse(knownServices);
                     var checked = '';
-                    if (services.indexOf(service.service_id) > -1) {
+                    if (knownServices.indexOf(service.service_id) === -1) {
+                        checked = 'checked';
+                        var serviceStr = localStorage.getItem('selectedServices');
+                        var selectedServices = (serviceStr === '' || serviceStr === null || serviceStr === undefined) ? [] : JSON.parse(serviceStr);
+                        selectedServices.push(service.service_id);
+                        localStorage.setItem('selectedServices', JSON.stringify(selectedServices));
+                        knownServices.push(service.service_id);
+                        localStorage.setItem('knownServices', JSON.stringify(knownServices));
+                    } else if (services.indexOf(service.service_id) > -1) {
                         checked = 'checked';
                         enabledServices.push(service.service_id);
                     }
