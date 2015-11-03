@@ -1,74 +1,90 @@
-(function (mod) {
-    mod(CodeMirror);
-})(function (CodeMirror) {
-    'use strict';
+var Monto = (function () {
 
-    CodeMirror.defineMode('monto', function () {
-        // get instance of editor
-        var editor = $('.CodeMirror')[0].CodeMirror;
-        var markers = [];
-        var cursor;
+    var lineSizes = [];
+    var language = localStorage.getItem('editor-language');
 
-        editor.on('cursorActivity', function (cm) {
-            // always keep track of the current cursor position
-            cursor = cm.getCursor();
-        });
+    var enabledServices = ["discover"];
+    var availableServices = [];
 
-        editor.on('change', function (cm, change) {
-            Source.refreshLineSizes(cm.getValue());
-            Source.setMessageContents(cm.getValue());
-            Source.send();
-        });
 
-        Sink.onTypeTriggerFunction('tokens', function () {
-            editor.operation(function () {
-                markers.forEach(function (marker) {
-                    marker.clear();
-                });
-                var tokens = Sink.getActiveProductsByType("tokens");
-                tokens.forEach(function (product) {
-                    var contents = product.contents;
-                    contents.forEach(function (content) {
-                        var pos = Source.convertMontoToCMPosWithLength({
-                            offset: content.offset,
-                            length: content.length
-                        });
-                        markers.push(editor.markText({line: pos.from.line, ch: pos.from.ch}, {
-                            line: pos.to.line,
-                            ch: pos.to.ch
-                        }, {className: 'cm-' + content.category}));
-                    });
-                });
-            });
-        });
-
-        Sink.onTypeTriggerFunction('outline', function () {
-            var content = '';
-            var outlines = Sink.getActiveProductsByType('outline');
-            outlines.forEach(function (product) {
-                content += refreshOutline(product.contents[0].children)
-            });
-            $('#outline').html(content);
-        });
-
-        function refreshOutline(children) {
-            if (typeof children === 'undefined' || children === null) {
-                return '';
+    return {
+        setEditorLanguage: function (value) {
+            Sink.resetProducts();
+            language = value;
+        },
+        getAvailableServices: function () {
+            return availableServices;
+        },
+        setAvailableServices: function (services) {
+            availableServices = services;
+        },
+        enableService: function (service) {
+            if (enabledServices.indexOf(service) === -1) {
+                enabledServices.push(service);
             }
-            var outline = '<ul class="outline" compact>';
-            children.forEach(function (child) {
-                var pos = Source.convertMontoToCMPosWithLength(child.identifier);
-                outline += sprintf('<li>%s : %s%s</li>', child.description, editor.getRange(pos.from, pos.to), refreshOutline(child.children));
+        },
+        disableService: function (service) {
+            var index = enabledServices.indexOf(service);
+            if (index > -1) {
+                enabledServices.splice(index, 1);
+            }
+        },
+        isServiceEnabled: function (service) {
+            return enabledServices.indexOf(service) > -1;
+        },
+        getLineSizes: function () {
+            return lineSizes;
+        },
+        refreshLineSizes: function (content) {
+            var lines = content.split('\n');
+            lineSizes = [];
+            lines.forEach(function (line) {
+                lineSizes.push(line.length);
             });
-            outline += '</ul>';
-            return outline;
+        },
+        convertMontoToCMPosWithLength: function (pos) {
+            //converts positions from  {offset, length} to {{line, ch},{line,ch}}
+            var chCount = 0;
+            for (var i = 0; i < lineSizes.length; i++) {
+                if (pos.offset < chCount + lineSizes[i] + 1) {
+                    return {
+                        from: {line: i, ch: pos.offset - chCount},
+                        to: {line: i, ch: pos.offset - chCount + pos.length}
+                    };
+                }
+                chCount += lineSizes[i] + 1;
+            }
+        },
+        convertMontoToCMPos: function (offset) {
+            //converts positions from  offset to {line, ch}
+            var chCount = 0;
+            for (var i = 0; i < lineSizes.length; i++) {
+                if (offset < chCount + lineSizes[i] + 1) {
+                    return {
+                        line: i,
+                        ch: offset - chCount
+                    };
+                }
+                chCount += lineSizes[i] + 1;
+            }
+        },
+        convertCMToMontoPos: function (pos) {
+            //converts positions from  {line, ch} to offset
+            var chCount = -1;
+            for (var i = 0; i <= pos.line; i++) {
+                var lineSize = lineSizes[i];
+                if (i === pos.line) {
+                    chCount += pos.ch;
+                } else {
+                    chCount += lineSize;
+                }
+                chCount += 1;
+            }
+            return chCount;
+        },
+        toHtmlString: function (content) {
+            return '<pre>' + JSON.stringify(content, null, 2).replace('<', '&lt').replace('>', '&gt') + '</pre>';
         }
+    }
 
-        return {
-            token: function (stream) {
-                stream.skipToEnd();
-                return '';
-            }
-        };
-    });
-});
+})();

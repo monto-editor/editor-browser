@@ -38,11 +38,11 @@ window.onload = function () {
     });
 
     $('#discover').on('click', function () {
-        Source.discoverServices();
+        Discovery.discoverServices();
     });
 
     $('#configure').on('click', function () {
-        Source.configureServices();
+        Configuration.configureServices();
     });
 
     $('#fileInput').on('change', function (e) {
@@ -92,23 +92,26 @@ window.onload = function () {
     });
 
     var editorLang = localStorage.getItem('editor-language');
-    $('#selected-editor-language').html(editorLang !== null && editorLang !== undefined && editorLang !== '' ? editorLang : 'text');
-    Source.setMessageLanguage(editorLang !== null && editorLang !== undefined && editorLang !== '' ? editorLang : 'text');
+    editorLang = editorLang !== null && editorLang !== undefined && editorLang !== '' ? editorLang : 'text';
+    $('#selected-editor-language').html(editorLang);
+    Monto.setEditorLanguage(editorLang);
+    Source.setMessageLanguage(editorLang);
 
     $(document).on('click', '.editor-language', function (e) {
         var val = e.target.text;
+        Monto.setEditorLanguage(val);
         Source.setMessageLanguage(val);
-        localStorage.setItem("editor-language", val);
+        localStorage.setItem('editor-language', val);
         $('#selected-editor-language').html(val);
     });
 
     var configLang = localStorage.getItem('config-language');
     $('#selected-config-language').html(configLang !== null && configLang !== undefined && configLang !== '' ? configLang : 'all');
-    Sink.setOptionsLanguage(configLang !== null && configLang !== undefined && configLang !== '' ? configLang : 'all');
+    Discovery.setOptionsLanguage(configLang !== null && configLang !== undefined && configLang !== '' ? configLang : 'all');
 
     $(document).on('click', '.config-language', function (e) {
         var val = e.target.text;
-        Sink.setOptionsLanguage(val);
+        Discovery.setOptionsLanguage(val);
         localStorage.setItem("config-language", val);
         $('#selected-config-language').html(val);
     });
@@ -129,7 +132,7 @@ window.onload = function () {
         }
         localStorage.setItem(id, value);
         var idParts = e.target.id.split('-');
-        Source.setConfiguration(idParts[0], idParts[1], value);
+        Configuration.setConfiguration(idParts[0], idParts[1], value);
     });
 
     $(document).on('click', '.config-dropdown', function (e) {
@@ -137,12 +140,12 @@ window.onload = function () {
         var idParts = e.target.id.split('-');
         var id = idParts[0] + '-' + idParts[1];
         localStorage.setItem(id, value);
-        Source.setConfiguration(idParts[0], idParts[1], value);
+        Configuration.setConfiguration(idParts[0], idParts[1], value);
         $('#selected-' + id).html(value);
     });
 
     $('ul#tabs li:not(#tablist-options)').on('click', function (e) {
-        Source.configureServices();
+        Configuration.configureServices();
     });
 
     $(document).on('click', '#tablist-editor', function (e) {

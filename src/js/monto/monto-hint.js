@@ -16,7 +16,7 @@
             };
         }
         var replacementLength = completions[0].contents[0].description.split(' ')[1].length - completions[0].contents[0].replacement.length;
-        var pos = Source.convertMontoToCMPosWithLength({
+        var pos = Monto.convertMontoToCMPosWithLength({
             offset: completions[0].contents[0].insertionOffset - replacementLength,
             length: replacementLength
         });

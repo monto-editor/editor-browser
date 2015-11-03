@@ -16,7 +16,7 @@
         errors.forEach(function (product) {
             var contents = product.contents !== undefined ? product.contents : '[]';
             contents.forEach(function (content) {
-                var position = Source.convertMontoToCMPosWithLength({offset: content.offset, length: content.length});
+                var position = Monto.convertMontoToCMPosWithLength({offset: content.offset, length: content.length});
                 list.push({
                     message: content.description,
                     severity: content.level,
