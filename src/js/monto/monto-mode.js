@@ -46,7 +46,7 @@
             var content = '';
             var outlines = Sink.getActiveProductsByType('outline');
             outlines.forEach(function (product) {
-                content += refreshOutline(product.contents[0].children)
+                content += refreshOutline(product.contents.children)
             });
             $('#outline').html(content);
         });

@@ -32,9 +32,9 @@ var Sink = (function () {
             parse = false;
             parseService = "";
         } else if (!skip) {
-            if (Monto.isServiceEnabled(rawMessage.data.split(' ')[1])) {
+            if (Monto.isServiceEnabled(rawMessage.data.split(' ')[3])) {
                 parse = true;
-                parseService = rawMessage.data.split(' ')[1];
+                parseService = rawMessage.data.split(' ')[3];
             } else {
                 skip = true;
             }
@@ -44,7 +44,6 @@ var Sink = (function () {
     };
 
     function processNewProduct(product) {
-        product.service_id = parseService;
         var productForType = products[product.product];
         if (productForType === undefined || productForType === null) {
             products[product.product] = [product];
@@ -52,7 +51,8 @@ var Sink = (function () {
             var index = -1;
             for (var i = 0; i < productForType.length; i++) {
                 var existingProduct = productForType[i];
-                if (existingProduct.service_id === product.service_id && (existingProduct.source !== product.source || existingProduct.version_id < product.version_id)) {
+                if (existingProduct.service_id === product.service_id
+                    && (existingProduct.source !== product.source || existingProduct.version_id < product.version_id)) {
                     index = i;
                 }
             }
@@ -62,13 +62,10 @@ var Sink = (function () {
                 products[product.product].push(product);
             }
         }
-        var tabID = '#tab-' + product.service_id;
-        if ($(tabID).length > 0) {
-            $(tabID).html(Monto.toHtmlString(product));
-        } else {
-            $('#products-tabs').append('<li role="presentation"><a class="product-tab" href="' + tabID + '">' + product.service_id + '</a></li>');
-            $('#products-div').append('<div role="tabpanel" id="tab-' + product.service_id + '" class="tab-pane"></div>');
-        }
+        var tabID = 'tab-' + product.service_id + '-' +  product.product;
+        $('#products-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + product.product + '</a></li>');
+        $('#products-div').append('<div role="tabpanel" id="' + tabID + '" class="tab-pane"></div>');
+        $('#'+tabID).html(Monto.toHtmlString(product));
         Sink.trigger(product.product);
     }
 
