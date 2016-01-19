@@ -58,7 +58,7 @@
             var outline = '<ul class="outline" compact>';
             children.forEach(function (child) {
                 var pos = Monto.convertMontoToCMPosWithLength(child.identifier);
-                outline += sprintf('<li>%s : %s%s</li>', child.description, editor.getRange(pos.from, pos.to), refreshOutline(child.children));
+                outline += sprintf('<li><img src="%s">%s : %s%s</li>', child.icon, child.description, editor.getRange(pos.from, pos.to), refreshOutline(child.children));
             });
             outline += '</ul>';
             return outline;
