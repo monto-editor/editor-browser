@@ -44,6 +44,7 @@ var Sink = (function () {
     };
 
     function processNewProduct(product) {
+        product.service_id = parseService;
         var productForType = products[product.product];
         if (productForType === undefined || productForType === null) {
             products[product.product] = [product];
@@ -63,9 +64,12 @@ var Sink = (function () {
             }
         }
         var tabID = 'tab-' + product.service_id + '-' +  product.product;
-        $('#products-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + product.product + '</a></li>');
-        $('#products-div').append('<div role="tabpanel" id="' + tabID + '" class="tab-pane"></div>');
-        $('#'+tabID).html(Monto.toHtmlString(product));
+        if ($('#' + tabID).length > 0) {
+            $('#'+tabID).html(Monto.toHtmlString(product));
+        } else {
+            $('#products-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + product.product + '</a></li>');
+            $('#products-div').append('<div role="tabpanel" id="' + tabID + '" class="tab-pane"></div>');
+        }
         Sink.trigger(product.product);
     }
 
