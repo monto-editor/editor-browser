@@ -17,7 +17,7 @@ var Source = (function () {
 
     var version = {
         source: 'nofile',
-        version_id: 0,
+        id: 0,
         language: localStorage.getItem('editor-language'),
         invalid: [],
         contents: '',
@@ -43,19 +43,19 @@ var Source = (function () {
         setMessageSelection: function (value) {
             version.selections = value;
         },
-        setMessageVersionId: function (value) {
-            version.version_id = value;
+        setMessageId: function (value) {
+            version.id = value;
         },
         send: function () {
             src.send(JSON.stringify(version));
             $('#tab-version').html(Monto.toHtmlString(version));
-            version.version_id += 1;
+            version.id += 1;
             version.selections = [];
         },
         setPosAndSend: function () {
             var editor = $('.CodeMirror')[0].CodeMirror;
             var pos = Monto.convertCMToMontoPos(editor.getCursor());
-            Source.setMessageSelection([{end: pos, begin: pos}]);
+            Source.setMessageSelection([{begin: pos, end: pos}]);
             Source.send();
         }
     };

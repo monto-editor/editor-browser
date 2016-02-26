@@ -53,7 +53,7 @@ var Sink = (function () {
             for (var i = 0; i < productForType.length; i++) {
                 var existingProduct = productForType[i];
                 if (existingProduct.service_id === product.service_id
-                    && (existingProduct.source !== product.source || existingProduct.version_id < product.version_id)) {
+                    && (existingProduct.source !== product.source || existingProduct.id < product.id)) {
                     index = i;
                 }
             }

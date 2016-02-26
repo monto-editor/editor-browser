@@ -53,7 +53,7 @@ window.onload = function () {
             }
             if (Source.getMessage().source !== file.name) {
                 Source.setMessageSource(file.name);
-                Source.setMessageVersionId(0);
+                Source.setMessageId(0);
             }
             var reader = new FileReader();
             reader.onload = function () {

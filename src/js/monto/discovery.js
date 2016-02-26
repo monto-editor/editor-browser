@@ -40,11 +40,13 @@ var Discovery = (function () {
         var foundServices = [];
 
         response.forEach(function (service) {
-            if (foundLanguages.indexOf(service.language) == -1) {
-                foundLanguages.push(service.language);
-                $('#editor-languages').append(sprintf('<li><a href="#" id="editor-%s" class="editor-language">%s</a></li>', service.language, service.language));
-                $('#config-languages').append(sprintf('<li><a href="#" id="config-%s" class="config-language">%s</a></li>', service.language, service.language));
-            }
+            service.products.forEach(function (product) {
+                if (foundLanguages.indexOf(product.language) == -1) {
+                    foundLanguages.push(product.language);
+                    $('#editor-languages').append(sprintf('<li><a href="#" id="editor-%s" class="editor-language">%s</a></li>', product.language, product.language));
+                    $('#config-languages').append(sprintf('<li><a href="#" id="config-%s" class="config-language">%s</a></li>', product.language, product.language));
+                }
+            });
             foundServices.push(service);
         });
 
@@ -91,6 +93,11 @@ var Discovery = (function () {
                         checked = 'checked';
                         Monto.enableService(service.service_id);
                     }
+                    var products = '';
+                    service.products.forEach(function (product) {
+                        products += product.language + '/' + product.product + ', ';
+                    });
+                    var products = products.slice(0, products.length-2);
                     $('#services').append(sprintf(
                         '<tr id="row-%s">' +
                         '<td class="mid-align">' +
@@ -102,10 +109,9 @@ var Discovery = (function () {
                         '<td class="mid-align">%s</td>' +
                         '<td class="mid-align">%s</td>' +
                         '<td class="mid-align">%s</td>' +
-                        '<td class="mid-align">%s</td>' +
                         '</tr>'
                         , service.service_id, service.service_id, checked, service.service_id,
-                        service.language, service.product, service.label, service.description));
+                        products, service.label, service.description));
                 }
             } else {
                 $('#row-' + service.service_id).remove();
@@ -118,13 +124,14 @@ var Discovery = (function () {
         Monto.getAvailableServices().forEach(function (service) {
             var panel = $('#options-' + service.service_id);
             var serviceConfig = [];
-            var content = parseConfigurationOptions(service.options, service, serviceConfig, []);
-            if (panel.length === 0) {
-                $('#options').append(content);
+            if (service.options.length > 0) {
+                var content = parseConfigurationOptions(service.options, service, serviceConfig, []);
+                if (panel.length === 0) {
+                    $('#options').append(content);
+                }
+                configMsg.configure_services.push({service_id: service.service_id, configurations: serviceConfig});
             }
-            configMsg.configure_services.push({service_id: service.service_id, configurations: serviceConfig});
         });
-        Configuration.setConfigurationMessage(configMsg);
     }
 
     function parseConfigurationOptions(options, service, serviceConfig, required_options) {
