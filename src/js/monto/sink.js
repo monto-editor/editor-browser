@@ -4,15 +4,15 @@ var Sink = (function () {
         sink = new WebSocket('ws://localhost:5003/');
     } catch (e) {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     }
     sink.onerror = function() {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     };
     sink.onclose = function() {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     };
 
     var parse = false;

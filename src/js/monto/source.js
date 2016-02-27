@@ -4,15 +4,15 @@ var Source = (function () {
         src = new WebSocket('ws://localhost:5002/');
     } catch (e) {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     }
     src.onerror = function() {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     };
     src.onclose = function() {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa-remove');
+        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     };
 
     var version = {
