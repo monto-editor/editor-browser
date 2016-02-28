@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>CodeMirror Monto</title>
+    <title>Monto Web Editor</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
@@ -20,6 +20,7 @@
 
     <script type="text/javascript" src="js/lib/jquery.min.js"></script>
     <script type="text/javascript" src="js/lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/lib/bootbox.min.js"></script>
     <script type="text/javascript" src="js/lib/sprintf.min.js"></script>
     <script type="text/javascript" src="js/lib/filesaver.min.js"></script>
     <script type="text/javascript" src="js/monto/monto.js"></script>
@@ -78,8 +79,15 @@
             <br/>
 
             <div class="row">
+                <ul id="file-tabs" class="nav nav-tabs">
+                </ul>
+                <div id="file-div" class="tab-content">
+                </div>
+            </div>
+            <br/>
+
+            <div class="row">
                 <div class="col-md-10">
-                    <label for="editor" id="file-name"></label>
                     <textarea id="editor"></textarea>
                 </div>
                 <div class="col-md-2">
@@ -178,9 +186,9 @@
                 <div role="tabpanel" id="tab-configuration" class="tab-pane"></div>
                 <div role="tabpanel" id="tab-version" class="tab-pane"></div>
                 <div role="tabpanel" id="tab-products" class="tab-pane">
-                    <ul id="products-tabs" class="nav nav-tabs">
+                    <ul id="product-tabs" class="nav nav-tabs">
                     </ul>
-                    <div id="products-div" class="tab-content">
+                    <div id="product-div" class="tab-content">
                     </div>
                 </div>
             </div>

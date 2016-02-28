@@ -26,6 +26,10 @@ window.onload = function () {
         saveAs(new Blob([editor.getValue()], {type: "text/plain;charset=utf-8"}), Source.getMessage().source);
     }
 
+    function saveWith(content, name) {
+        saveAs(new Blob([content], {type: "text/plain;charset=utf-8"}), name);
+    }
+
     CodeMirror.commands.save = save;
     $('#save').on('click', save);
 
@@ -51,17 +55,22 @@ window.onload = function () {
             if (file.type.match('image.*')) {
                 return;
             }
-            if (Source.getMessage().source !== file.name) {
-                Source.setMessageSource(file.name);
-                Source.setMessageId(0);
-            }
             var reader = new FileReader();
             reader.onload = function () {
                 var text = reader.result;
+                Source.setMessageContents(editor.getValue());
+                var nameParts = file.name.split('.');
+                var ending = nameParts.length > 1 ? nameParts[nameParts.length-1] : 'txt';
+                var language = Monto.getLanguageByEnding(ending);
+                Source.addNewSource(file.name, language, text);
+                Source.loadSource(file.name);
+                changeEditorLanguage(language);
                 editor.setValue(text);
+                $('#file-tabs').append('<li role="presentation" id="li-' + file.name + '"><a class="file-tab" href="#' + file.name + '">' + file.name + ' <button class="btn btn-xs btn-danger close-file" data-id="' + file.name + '"><span id="con-glyph" class="fa fa-remove"></span></button></a></li>'); //
+                $('#file-div').append('<div role="tabpanel" id="' + file.name+ '" class="tab-pane"></div>');
+                $('a[href="#' + file.name + '"]').tab('show');
             };
             reader.readAsText(file);
-            $('#file-name').html(file.name);
         } else {
             alert('The File APIs are not fully supported in this browser.');
         }
@@ -77,9 +86,58 @@ window.onload = function () {
         $(this).tab('show');
     });
 
+    $(document).on('click', '.close-file', function (e) {
+        var dataId = $(this).attr('data-id');
+        bootbox.dialog({
+            message: 'Do you want to save the file "' + dataId + '" before closing?',
+            title: 'Close file ' + dataId,
+            buttons: {
+                success: {
+                    label: "Close without saving",
+                    className: "btn-danger",
+                    callback: function() {
+                        closeFile(Source.getMessageBySource(dataId).source);
+                    }
+                },
+                danger: {
+                    label: "Cancel",
+                    className: "btn-warning"
+                },
+                main: {
+                    label: "Save",
+                    className: "btn-success",
+                    callback: function() {
+                        Source.setMessageContents(editor.getValue());
+                        var source = Source.getMessageBySource(dataId);
+                        saveWith(source.contents, source.source);
+                        closeFile(source.source);
+                    }
+                }
+            }
+        });
+    });
+
+    function closeFile (name) {
+        $('#li-' + name.replace('.', '\\.')).remove();
+        $('#' + name.replace('.', '\\.')).remove();
+        Source.removeSource(name);changeEditorLanguage('text');
+        editor.setValue('');
+        $('#outline').html('');
+    }
+
     $(document).on('click', '.product-tab', function (e) {
         e.preventDefault();
         $(this).tab('show');
+    });
+
+    $(document).on('click', '.file-tab', function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+        Source.setMessageContents(editor.getValue());
+        Source.loadSource($(this)[0].text.trim());
+        var source = Source.getMessage();
+        editor.setValue(source.contents);
+        changeEditorLanguage(source.language);
     });
 
     $(document).on('change', '.discoverOption', function (e) {
@@ -91,19 +149,17 @@ window.onload = function () {
         Sink.triggerAll();
     });
 
-    var editorLang = localStorage.getItem('editor-language');
-    editorLang = editorLang !== null && editorLang !== undefined && editorLang !== '' ? editorLang : 'text';
-    $('#selected-editor-language').html(editorLang);
-    Monto.setEditorLanguage(editorLang);
-    Source.setMessageLanguage(editorLang);
+    changeEditorLanguage('text');
 
     $(document).on('click', '.editor-language', function (e) {
-        var val = e.target.text;
-        Monto.setEditorLanguage(val);
-        Source.setMessageLanguage(val);
-        localStorage.setItem('editor-language', val);
-        $('#selected-editor-language').html(val);
+        changeEditorLanguage(e.target.text);
     });
+
+    function changeEditorLanguage (language) {
+        Monto.setEditorLanguage(language);
+        Source.setMessageLanguage(language);
+        $('#selected-editor-language').html(language);
+    }
 
     var configLang = localStorage.getItem('config-language');
     $('#selected-config-language').html(configLang !== null && configLang !== undefined && configLang !== '' ? configLang : 'all');

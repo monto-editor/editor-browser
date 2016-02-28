@@ -1,13 +1,28 @@
 var Monto = (function () {
 
     var lineSizes = [];
-    var language = localStorage.getItem('editor-language');
+    var language = 'text';
 
     var enabledServices = ["discover"];
     var availableServices = [];
 
+    var languageEndings = {
+        c: 'c',
+        cpp: 'c++',
+        css: 'css',
+        hs: 'haskell',
+        html: 'html',
+        java: 'java',
+        js: 'javascript',
+        py: 'python',
+        txt : 'text'
+    };
+
 
     return {
+        getLanguageByEnding: function (ending) {
+            return languageEndings[ending];
+        },
         setEditorLanguage: function (value) {
             Sink.resetProducts();
             language = value;

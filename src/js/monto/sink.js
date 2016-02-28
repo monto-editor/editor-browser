@@ -67,8 +67,8 @@ var Sink = (function () {
         if ($('#' + tabID).length > 0) {
             $('#'+tabID).html(Monto.toHtmlString(product));
         } else {
-            $('#products-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + product.product + '</a></li>');
-            $('#products-div').append('<div role="tabpanel" id="' + tabID + '" class="tab-pane"></div>');
+            $('#product-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + product.product + '</a></li>');
+            $('#product-div').append('<div role="tabpanel" id="' + tabID + '" class="tab-pane"></div>');
         }
         Sink.trigger(product.product);
     }

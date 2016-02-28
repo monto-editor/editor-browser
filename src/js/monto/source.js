@@ -15,42 +15,71 @@ var Source = (function () {
         $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     };
 
-    var version = {
+    var source = {
         source: 'nofile',
         id: 0,
-        language: localStorage.getItem('editor-language'),
+        language: 'text',
         invalid: [],
         contents: '',
         selections: []
     };
 
+    var sources = {};
+
     return {
+        addNewSource: function (name, language, contents) {
+            Source.saveCurrentSource();
+            var lookup = sources[name];
+            if (lookup === undefined || lookup === null) {
+                sources[name] = {
+                    source: name,
+                    id: 0,
+                    language: language,
+                    invalid: [],
+                    contents: contents,
+                    selections: []
+                }
+            }
+        },
+        removeSource: function(name) {
+            delete sources[name];
+        },
+        loadSource: function (name) {
+            Source.saveCurrentSource();
+            source = sources[name];
+        },
+        saveCurrentSource: function () {
+            sources[source.source] = source;
+        },
+        getMessageBySource: function (name) {
+            return sources[name];
+        },
         getMessage: function () {
-            return version;
+            return source;
         },
         setMessage: function (value) {
-            version = value;
+            source = value;
         },
         setMessageSource: function (value) {
-            version.source = value;
+            source.source = value;
         },
         setMessageLanguage: function (value) {
-            version.language = value;
+            source.language = value;
         },
         setMessageContents: function (value) {
-            version.contents = value;
+            source.contents = value;
         },
         setMessageSelection: function (value) {
-            version.selections = value;
+            source.selections = value;
         },
         setMessageId: function (value) {
-            version.id = value;
+            source.id = value;
         },
         send: function () {
-            src.send(JSON.stringify(version));
-            $('#tab-version').html(Monto.toHtmlString(version));
-            version.id += 1;
-            version.selections = [];
+            src.send(JSON.stringify(source));
+            $('#tab-version').html(Monto.toHtmlString(source));
+            source.id += 1;
+            source.selections = [];
         },
         setPosAndSend: function () {
             var editor = $('.CodeMirror')[0].CodeMirror;

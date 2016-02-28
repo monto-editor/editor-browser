@@ -27,6 +27,7 @@ Used libraries
 
  - CodeMirror: 5.6
  - Bootstrap: 3.3.5
+ - Bootbox: 4.4.0
  - font-awesome: 4.4.0
  - jQuery: 2.1.4
  - FileSaver.js: accessed master on 02.09.2015
