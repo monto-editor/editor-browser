@@ -15,15 +15,15 @@
                 list: []
             };
         }
-        var replacementLength = completions[0].contents[0].description.split(' ')[1].length - completions[0].contents[0].replacement.length;
-        var pos = Monto.convertMontoToCMPosWithLength({
-            offset: completions[0].contents[0].insertionOffset - replacementLength,
-            length: replacementLength
-        });
+        var lastSelectionPos = Source.getLastSelectionPos();
+        var pos = {
+            from: lastSelectionPos.begin,
+            to: lastSelectionPos.end
+        };
         completions.forEach(function (completion) {
             var contents = completion.contents;
             contents.forEach(function (content) {
-                list.push(content.description.split(' ')[1]);
+                list.push(content.replacement);
             });
         });
         return {

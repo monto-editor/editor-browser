@@ -24,6 +24,11 @@ var Source = (function () {
         selections: []
     };
 
+    var lastSelectionPos = {
+        begin: {},
+        end: {}
+    };
+
     var sources = {};
 
     return {
@@ -51,7 +56,6 @@ var Source = (function () {
             Source.saveCurrentSource();
             source = sources[name];
         },
-
         saveCurrentSource: function () {
             sources[source.source] = source;
         },
@@ -88,6 +92,7 @@ var Source = (function () {
         setPosAndSend: function () {
             var editor = $('.CodeMirror')[0].CodeMirror;
             var cursor = editor.getCursor();
+            lastSelectionPos.end = cursor;
             var end = Monto.convertCMToMontoPos(cursor);
             var line = editor.getLine(cursor.line);
             if (cursor.ch === 0) {
@@ -96,7 +101,9 @@ var Source = (function () {
             var begin;
             for (var i = cursor.ch; i > -1; i--) {
                 if (line[i] === ' ') {
-                    begin = Monto.convertCMToMontoPos({ch: i+1, line: cursor.line});
+                    begin = {ch: i+1, line: cursor.line};
+                    lastSelectionPos.begin = begin;
+                    begin = Monto.convertCMToMontoPos(begin);
                     break;
                 }
             }
@@ -105,6 +112,9 @@ var Source = (function () {
             console.log(begin);
             console.log(end);
             Source.send();
+        },
+        getLastSelectionPos: function () {
+            return lastSelectionPos;
         }
     };
 })();
