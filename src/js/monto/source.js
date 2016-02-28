@@ -87,8 +87,23 @@ var Source = (function () {
         },
         setPosAndSend: function () {
             var editor = $('.CodeMirror')[0].CodeMirror;
-            var pos = Monto.convertCMToMontoPos(editor.getCursor());
-            Source.setMessageSelection([{begin: pos, end: pos}]);
+            var cursor = editor.getCursor();
+            var end = Monto.convertCMToMontoPos(cursor);
+            var line = editor.getLine(cursor.line);
+            if (cursor.ch === 0) {
+                return;
+            }
+            var begin;
+            for (var i = cursor.ch; i > -1; i--) {
+                if (line[i] === ' ') {
+                    begin = Monto.convertCMToMontoPos({ch: i+1, line: cursor.line});
+                    break;
+                }
+            }
+            Source.setMessageSelection([{begin: begin, end: end}]);
+            console.log(Source.getMessage());
+            console.log(begin);
+            console.log(end);
             Source.send();
         }
     };

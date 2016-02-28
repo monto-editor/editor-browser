@@ -73,6 +73,7 @@ window.onload = function () {
                 var language = Monto.getLanguageByEnding(ending);
                 Source.addNewSource(file.name, language, text);
                 Source.loadSource(file.name);
+                $('#outline').html('');
                 changeEditorLanguage(language);
                 editor.setValue(text);
                 $('#file-tabs').append('<li role="presentation" id="li-' + file.name + '"><a class="file-tab" href="#' + file.name + '">' + file.name + ' <button class="btn btn-xs btn-danger close-file" data-id="' + file.name + '"><span class="fa fa-remove"></span></button></a></li>'); //
@@ -130,8 +131,8 @@ window.onload = function () {
         $('#li-' + name.replace('.', '\\.')).remove();
         $('#' + name.replace('.', '\\.')).remove();
         changeEditorLanguage('text');
-        editor.setValue('');
         $('#outline').html('');
+        editor.setValue('');
         $("#file-tabs li").children('a').first().trigger('click');
         Source.removeSource(name);
     }
@@ -147,6 +148,7 @@ window.onload = function () {
         Source.setMessageContents(editor.getValue());
         Source.loadSource($(this)[0].text.trim());
         var source = Source.getMessage();
+        $('#outline').html('');
         editor.setValue(source.contents);
         changeEditorLanguage(source.language);
     });
