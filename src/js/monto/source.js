@@ -39,15 +39,19 @@ var Source = (function () {
                     contents: contents,
                     selections: []
                 }
+            } else {
+                console.log('source already existing: ' + name);
             }
         },
         removeSource: function(name) {
+            sources[name] = null;
             delete sources[name];
         },
         loadSource: function (name) {
             Source.saveCurrentSource();
             source = sources[name];
         },
+
         saveCurrentSource: function () {
             sources[source.source] = source;
         },

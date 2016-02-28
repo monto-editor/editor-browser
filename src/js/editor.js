@@ -49,10 +49,19 @@ window.onload = function () {
         Configuration.configureServices();
     });
 
+    $('#fileInput').on('click', function (e) {
+        // required to enable reselection of last opened file when closed before
+        this.value = null;
+    });
+
     $('#fileInput').on('change', function (e) {
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             var file = e.target.files[0];
             if (file.type.match('image.*')) {
+                return;
+            }
+            var msg = Source.getMessageBySource(file.name);
+            if (msg !== undefined && msg !== null) {
                 return;
             }
             var reader = new FileReader();
@@ -66,7 +75,7 @@ window.onload = function () {
                 Source.loadSource(file.name);
                 changeEditorLanguage(language);
                 editor.setValue(text);
-                $('#file-tabs').append('<li role="presentation" id="li-' + file.name + '"><a class="file-tab" href="#' + file.name + '">' + file.name + ' <button class="btn btn-xs btn-danger close-file" data-id="' + file.name + '"><span id="con-glyph" class="fa fa-remove"></span></button></a></li>'); //
+                $('#file-tabs').append('<li role="presentation" id="li-' + file.name + '"><a class="file-tab" href="#' + file.name + '">' + file.name + ' <button class="btn btn-xs btn-danger close-file" data-id="' + file.name + '"><span class="fa fa-remove"></span></button></a></li>'); //
                 $('#file-div').append('<div role="tabpanel" id="' + file.name+ '" class="tab-pane"></div>');
                 $('a[href="#' + file.name + '"]').tab('show');
             };
@@ -120,9 +129,11 @@ window.onload = function () {
     function closeFile (name) {
         $('#li-' + name.replace('.', '\\.')).remove();
         $('#' + name.replace('.', '\\.')).remove();
-        Source.removeSource(name);changeEditorLanguage('text');
+        changeEditorLanguage('text');
         editor.setValue('');
         $('#outline').html('');
+        $("#file-tabs li").children('a').first().trigger('click');
+        Source.removeSource(name);
     }
 
     $(document).on('click', '.product-tab', function (e) {
