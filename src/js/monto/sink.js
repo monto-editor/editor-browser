@@ -18,21 +18,31 @@ var Sink = (function () {
     var parse = false;
     var skip = false;
     var parseService = "";
-
     var triggerFunction = {};
-
     var products = {};
 
     sink.onmessage = function (rawMessage) {
         if (parse) {
-            var message = JSON.parse(rawMessage.data);
-            if (message.product !== undefined) {
-                processNewProduct(message);
+            if (parseService === "require") {
+                var required = JSON.parse(rawMessage.data);
+                required.required_sources.forEach(function (source) {
+                    Source.sendSource(source);
+                });
+                Source.resend();
+                console.log(rawMessage.data);
+            } else {
+                var message = JSON.parse(rawMessage.data);
+                if (message.product !== undefined) {
+                    processNewProduct(message);
+                }
             }
             parse = false;
             parseService = "";
         } else if (!skip) {
-            if (Monto.isServiceEnabled(rawMessage.data.split(' ')[3])) {
+            if (rawMessage.data === "require") {
+                parse = true;
+                parseService = rawMessage.data;
+            } else  if (Monto.isServiceEnabled(rawMessage.data.split(' ')[3])) {
                 parse = true;
                 parseService = rawMessage.data.split(' ')[3];
             } else {

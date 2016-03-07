@@ -33,7 +33,6 @@ var Source = (function () {
 
     return {
         addNewSource: function (name, language, contents) {
-            Source.saveCurrentSource();
             var lookup = sources[name];
             if (lookup === undefined || lookup === null) {
                 sources[name] = {
@@ -44,23 +43,19 @@ var Source = (function () {
                     contents: contents,
                     selections: []
                 }
-            } else {
-                console.log('source already existing: ' + name);
             }
         },
         removeSource: function(name) {
-            sources[name] = null;
             delete sources[name];
         },
         loadSource: function (name) {
-            Source.saveCurrentSource();
             source = sources[name];
-        },
-        saveCurrentSource: function () {
-            sources[source.source] = source;
         },
         getMessageBySource: function (name) {
             return sources[name];
+        },
+        setMessageBySource: function (name, source) {
+            sources[name] = source;
         },
         getMessage: function () {
             return source;
@@ -84,10 +79,26 @@ var Source = (function () {
             source.id = value;
         },
         send: function () {
-            src.send(JSON.stringify(source));
-            $('#tab-version').html(Monto.toHtmlString(source));
-            source.id += 1;
             source.selections = [];
+            $('#tab-version').html(Monto.toHtmlString(source));
+            src.send(JSON.stringify(source));
+            source.id += 1;
+        },
+        resend: function () {
+            $('#tab-version').html(Monto.toHtmlString(source));
+            src.send(JSON.stringify(source));
+            source.id += 1;
+        },
+        sendWithSelections: function (selections) {
+            source.selections = selections;
+            src.send(JSON.stringify(source));
+            source.id += 1;
+        },
+        sendSource: function(source) {
+            var sourceMessage = sources[source];
+            src.send(JSON.stringify(sourceMessage));
+            sourceMessage.id += 1;
+            sources[source] = sourceMessage;
         },
         setPosAndSend: function () {
             var editor = $('.CodeMirror')[0].CodeMirror;
@@ -107,11 +118,7 @@ var Source = (function () {
                     break;
                 }
             }
-            Source.setMessageSelection([{begin: begin, end: end}]);
-            console.log(Source.getMessage());
-            console.log(begin);
-            console.log(end);
-            Source.send();
+            Source.sendWithSelections([{begin: begin, end: end}]);
         },
         getLastSelectionPos: function () {
             return lastSelectionPos;

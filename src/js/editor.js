@@ -54,6 +54,37 @@ window.onload = function () {
         this.value = null;
     });
 
+    function openFile(filename, text) {
+        Source.setMessageContents(editor.getValue());
+        var nameParts = filename.split('.');
+        var ending = nameParts.length > 1 ? nameParts[nameParts.length - 1] : 'txt';
+        var language = Monto.getLanguageByEnding(ending);
+        Source.addNewSource(filename, language, text);
+        Source.loadSource(filename);
+        $('#outline').html('');
+        changeEditorLanguage(language);
+        editor.setValue(text);
+        $('#file-tabs').append('<li role="presentation" id="li-' + filename + '">' +
+            '<a class="file-tab" href="#' + filename + '">' + filename +
+            ' <button class="btn btn-xs btn-danger close-file" data-id="' + filename + '">' +
+            '<span class="fa fa-remove"></span></button></a></li>'); //
+        $('#file-div').append('<div role="tabpanel" id="' + filename+ '" class="tab-pane"></div>');
+        $('a[href="#' + filename + '"]').tab('show');
+    }
+
+    $('#new').on('click', function () {
+        bootbox.prompt("Enter a name for the new file", function(filename) {
+            if (filename !== undefined && filename !== null) {
+                var msg = Source.getMessageBySource(filename);
+                if (msg !== undefined && msg !== null) {
+                    bootbox.alert("File name already exists");
+                } else {
+                    openFile(filename, "");
+                }
+            }
+        });
+    });
+
     $('#fileInput').on('change', function (e) {
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             var file = e.target.files[0];
@@ -62,25 +93,14 @@ window.onload = function () {
             }
             var msg = Source.getMessageBySource(file.name);
             if (msg !== undefined && msg !== null) {
-                return;
+                bootbox.alert("File already open");
+            } else {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    openFile(file.name, reader.result);
+                };
+                reader.readAsText(file);
             }
-            var reader = new FileReader();
-            reader.onload = function () {
-                var text = reader.result;
-                Source.setMessageContents(editor.getValue());
-                var nameParts = file.name.split('.');
-                var ending = nameParts.length > 1 ? nameParts[nameParts.length-1] : 'txt';
-                var language = Monto.getLanguageByEnding(ending);
-                Source.addNewSource(file.name, language, text);
-                Source.loadSource(file.name);
-                $('#outline').html('');
-                changeEditorLanguage(language);
-                editor.setValue(text);
-                $('#file-tabs').append('<li role="presentation" id="li-' + file.name + '"><a class="file-tab" href="#' + file.name + '">' + file.name + ' <button class="btn btn-xs btn-danger close-file" data-id="' + file.name + '"><span class="fa fa-remove"></span></button></a></li>'); //
-                $('#file-div').append('<div role="tabpanel" id="' + file.name+ '" class="tab-pane"></div>');
-                $('a[href="#' + file.name + '"]').tab('show');
-            };
-            reader.readAsText(file);
         } else {
             alert('The File APIs are not fully supported in this browser.');
         }
@@ -103,17 +123,6 @@ window.onload = function () {
             title: 'Close file ' + dataId,
             buttons: {
                 success: {
-                    label: "Close without saving",
-                    className: "btn-danger",
-                    callback: function() {
-                        closeFile(Source.getMessageBySource(dataId).source);
-                    }
-                },
-                danger: {
-                    label: "Cancel",
-                    className: "btn-warning"
-                },
-                main: {
                     label: "Save",
                     className: "btn-success",
                     callback: function() {
@@ -122,19 +131,32 @@ window.onload = function () {
                         saveWith(source.contents, source.source);
                         closeFile(source.source);
                     }
+                },
+                danger: {
+                    label: "Cancel",
+                    className: "btn-warning"
+                },
+                main: {
+                    label: "Close without saving",
+                    className: "btn-danger",
+                    callback: function() {
+                        console.log(Source.getMessageBySource(dataId));
+                        closeFile(dataId);
+                        console.log(Source.getMessageBySource(dataId));
+                    }
                 }
             }
         });
     });
 
     function closeFile (name) {
+        Source.removeSource(name);
         $('#li-' + name.replace('.', '\\.')).remove();
         $('#' + name.replace('.', '\\.')).remove();
         changeEditorLanguage('text');
         $('#outline').html('');
         editor.setValue('');
         $("#file-tabs li").children('a').first().trigger('click');
-        Source.removeSource(name);
     }
 
     $(document).on('click', '.product-tab', function (e) {
