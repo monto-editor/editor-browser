@@ -96,9 +96,11 @@ var Source = (function () {
         },
         sendSource: function(source) {
             var sourceMessage = sources[source];
-            src.send(JSON.stringify(sourceMessage));
-            sourceMessage.id += 1;
-            sources[source] = sourceMessage;
+            if (sourceMessage !== undefined && sourceMessage !== null) {
+                src.send(JSON.stringify(sourceMessage));
+                sourceMessage.id += 1;
+                sources[source] = sourceMessage;
+            }
         },
         setPosAndSend: function () {
             var editor = $('.CodeMirror')[0].CodeMirror;
