@@ -68,12 +68,12 @@ window.onload = function () {
             '<a class="file-tab" href="#' + filename + '">' + filename +
             ' <button class="btn btn-xs btn-danger close-file" data-id="' + filename + '">' +
             '<span class="fa fa-remove"></span></button></a></li>'); //
-        $('#file-div').append('<div role="tabpanel" id="' + filename+ '" class="tab-pane"></div>');
+        $('#file-div').append('<div role="tabpanel" id="' + filename + '" class="tab-pane"></div>');
         $('a[href="#' + filename + '"]').tab('show');
     }
 
     $('#new').on('click', function () {
-        bootbox.prompt("Enter a name for the new file", function(filename) {
+        bootbox.prompt("Enter a name for the new file", function (filename) {
             if (filename !== undefined && filename !== null) {
                 var msg = Source.getMessageBySource(filename);
                 if (msg !== undefined && msg !== null) {
@@ -111,6 +111,12 @@ window.onload = function () {
         $(this).tab('show');
     });
 
+    $('#tablist-tools').find('a').on('click', function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+        FileGraph.draw('filegraph');
+    });
+
     $('#message-tabs').find('a').on('click', function (e) {
         e.preventDefault();
         $(this).tab('show');
@@ -125,7 +131,7 @@ window.onload = function () {
                 success: {
                     label: "Save",
                     className: "btn-success",
-                    callback: function() {
+                    callback: function () {
                         Source.setMessageContents(editor.getValue());
                         var source = Source.getMessageBySource(dataId);
                         saveWith(source.contents, source.source);
@@ -139,17 +145,15 @@ window.onload = function () {
                 main: {
                     label: "Close without saving",
                     className: "btn-danger",
-                    callback: function() {
-                        console.log(Source.getMessageBySource(dataId));
+                    callback: function () {
                         closeFile(dataId);
-                        console.log(Source.getMessageBySource(dataId));
                     }
                 }
             }
         });
     });
 
-    function closeFile (name) {
+    function closeFile(name) {
         Source.removeSource(name);
         $('#li-' + name.replace('.', '\\.')).remove();
         $('#' + name.replace('.', '\\.')).remove();
@@ -190,7 +194,7 @@ window.onload = function () {
         changeEditorLanguage(e.target.text);
     });
 
-    function changeEditorLanguage (language) {
+    function changeEditorLanguage(language) {
         Monto.setEditorLanguage(language);
         Source.setMessageLanguage(language);
         $('#selected-editor-language').html(language);
@@ -247,4 +251,6 @@ window.onload = function () {
         Sink.triggerAll();
         Source.send();
     });
+
+    FileGraph.draw('filegraph');
 };

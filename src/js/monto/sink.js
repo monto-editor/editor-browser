@@ -29,7 +29,6 @@ var Sink = (function () {
                     Source.sendSource(source);
                 });
                 Source.resend();
-                console.log(rawMessage.data);
             } else {
                 var message = JSON.parse(rawMessage.data);
                 if (message.product !== undefined) {

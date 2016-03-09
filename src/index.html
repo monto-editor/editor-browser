@@ -8,13 +8,14 @@
 
     <link rel="icon" href="img/monto.ico" type="image/x-icon"/>
 
-    <link rel="stylesheet" type="text/css" href="css/lib/font-awesome/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/lib/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/lib/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/lib/bootstrap/awesome-bootstrap-checkbox.min.css">
     <link rel="stylesheet" type="text/css" href="css/lib/codemirror/codemirror.min.css">
     <link rel="stylesheet" type="text/css" href="css/lib/codemirror/fullscreen.min.css">
     <link rel="stylesheet" type="text/css" href="css/lib/codemirror/show-hint.min.css">
     <link rel="stylesheet" type="text/css" href="css/lib/codemirror/lint.min.css">
+    <link rel="stylesheet" type="text/css" href="css/lib/vis.min.css">
     <link rel="stylesheet" type="text/css" href="css/monto/monto.css">
     <link rel="stylesheet" type="text/css" href="css/editor.css">
 
@@ -23,6 +24,7 @@
     <script type="text/javascript" src="js/lib/bootbox.min.js"></script>
     <script type="text/javascript" src="js/lib/sprintf.min.js"></script>
     <script type="text/javascript" src="js/lib/filesaver.min.js"></script>
+    <script type="text/javascript" src="js/lib/vis.min.js"></script>
     <script type="text/javascript" src="js/monto/monto.js"></script>
     <script type="text/javascript" src="js/monto/source.js"></script>
     <script type="text/javascript" src="js/monto/sink.js"></script>
@@ -35,6 +37,7 @@
     <script type="text/javascript" src="js/monto/monto-mode.js"></script>
     <script type="text/javascript" src="js/monto/monto-hint.js"></script>
     <script type="text/javascript" src="js/monto/monto-lint.js"></script>
+    <script type="text/javascript" src="js/filegraph.js"></script>
     <script type="text/javascript" src="js/editor.js"></script>
 </head>
 <body>
@@ -48,6 +51,7 @@
 
     <ul id="tabs" class="nav nav-tabs">
         <li role="presentation" class="active" id="tablist-editor"><a href="#tab-editor">Editor</a></li>
+        <li role="presentation" id="tablist-tools"><a href="#tab-tools">Tools</a></li>
         <li role="presentation" id="tablist-options"><a href="#tab-options">Options</a></li>
         <li role="presentation"><a href="#tab-messages">Messages</a></li>
     </ul>
@@ -99,6 +103,21 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div role="tabpanel" id="tab-tools" class="tab-pane">
+            <br/>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-primary panel-default cm-s-monto">
+                        <div class="panel-heading">
+                            File Graph
+                        </div>
+                        <div class="panel-body" id="filegraph"></div>
+                    </div>
+                </div>
+                <div class="col-md-6"></div>
             </div>
         </div>
         <div role="tabpanel" id="tab-options" class="tab-pane">
