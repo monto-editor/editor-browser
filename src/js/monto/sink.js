@@ -54,44 +54,48 @@ var Sink = (function () {
 
     function processNewProduct(product) {
         product.service_id = parseService;
-        var productForType = products[product.product];
+        var src = product.source;
+        var prod = product.product;
+        var productForSource = products[src];
+        if (productForSource === undefined || productForSource === null) {
+            products[src] = {};
+        }
+        var productForType = products[src][prod];
         if (productForType === undefined || productForType === null) {
-            products[product.product] = [product];
+            products[src][prod] = [product];
         } else {
             var index = -1;
             for (var i = 0; i < productForType.length; i++) {
                 var existingProduct = productForType[i];
                 if (existingProduct.service_id === product.service_id
-                    && (existingProduct.source !== product.source || existingProduct.id < product.id)) {
+                    && (existingProduct.source !== src || existingProduct.id < product.id)) {
                     index = i;
                 }
             }
             if (index > -1) {
-                products[product.product][index] = product;
+                products[src][prod][index] = product;
             } else {
-                products[product.product].push(product);
+                products[src][prod].push(product);
             }
         }
-        var tabID = 'tab-' + product.service_id + '-' +  product.product;
+        var tabID = 'tab-' + product.service_id + '-' +  prod;
         if ($('#' + tabID).length > 0) {
             $('#'+tabID).html(Monto.toHtmlString(product));
         } else {
-            $('#product-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + product.product + '</a></li>');
+            $('#product-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + prod + '</a></li>');
             $('#product-div').append('<div role="tabpanel" id="' + tabID + '" class="tab-pane"></div>');
         }
-        Sink.trigger(product.product);
+        Sink.trigger(prod);
     }
 
     return {
-        getProducts: function () {
-            return products;
-        },
-        getProductsByType: function (type) {
-            return products[type];
-        },
         getActiveProductsByType: function (type) {
             var enabledProductsByType = [];
-            var productsByType = products[type];
+            var productsBySource = products[Source.getMessage().source];
+            if (productsBySource === undefined || productsBySource === null) {
+                return [];
+            }
+            var productsByType = productsBySource[type];
             if (productsByType === undefined || productsByType === null) {
                 return [];
             }
@@ -107,16 +111,6 @@ var Sink = (function () {
                 }
             });
             return enabledProductsByType;
-        },
-        getProductByServiceID: function (serviceID) {
-            for (var i in products) {
-                for (var j in products[i]) {
-                    if (products[i][j].service_id === serviceID) {
-                        return products[i][j];
-                    }
-                }
-            }
-            return null;
         },
         resetProducts: function () {
             products = {};

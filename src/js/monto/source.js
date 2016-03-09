@@ -54,29 +54,14 @@ var Source = (function () {
         getMessageBySource: function (name) {
             return sources[name];
         },
-        setMessageBySource: function (name, source) {
-            sources[name] = source;
-        },
         getMessage: function () {
             return source;
-        },
-        setMessage: function (value) {
-            source = value;
-        },
-        setMessageSource: function (value) {
-            source.source = value;
         },
         setMessageLanguage: function (value) {
             source.language = value;
         },
         setMessageContents: function (value) {
             source.contents = value;
-        },
-        setMessageSelection: function (value) {
-            source.selections = value;
-        },
-        setMessageId: function (value) {
-            source.id = value;
         },
         send: function () {
             source.selections = [];

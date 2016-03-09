@@ -39,17 +39,9 @@ var FileGraph = (function () {
         }
     }
 
-    function setNodes(nodes) {
-        data.nodes = nodes;
-    }
-
-    function setEdges(edges) {
-        data.edges = edges
-    }
-
     function draw(container) {
-        setNodes([]);
-        setEdges([]);
+        data.nodes = [];
+        data.edges = [];
         var products = Sink.getActiveProductsByType('filegraph');
         products.forEach(function (product) {
             if (product.source === Source.getMessage().source) {
@@ -69,10 +61,6 @@ var FileGraph = (function () {
     }
 
     return {
-        addNode: addNode,
-        addEdge: addEdge,
-        setNodes: setNodes,
-        setEdges: setEdges,
         draw: draw
     };
 })();
