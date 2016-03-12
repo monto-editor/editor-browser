@@ -6,16 +6,13 @@ var FileGraph = (function () {
 
     var options = {
         height: "768px",
-        layout: {
-            randomSeed: 691999
-            //hierarchical: {
-            //    //sortMethod: "directed",
-            //    direction: "UD"
-            //}
-        },
+        //layout: {
+        //    randomSeed: 691999
+        //},
         edges: {
             arrows: {to: true},
-            physics: false
+            physics: false,
+            smooth: false
         },
         nodes: {
             shape: "box",

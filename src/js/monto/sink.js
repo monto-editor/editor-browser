@@ -85,7 +85,9 @@ var Sink = (function () {
             $('#product-tabs').append('<li role="presentation"><a class="product-tab" href="#' + tabID + '">' + product.service_id + '/' + prod + '</a></li>');
             $('#product-div').append('<div role="tabpanel" id="' + tabID + '" class="tab-pane"></div>');
         }
-        Sink.trigger(prod);
+        if (product.source === Source.getMessage().source) {
+            Sink.trigger(prod);
+        }
     }
 
     return {

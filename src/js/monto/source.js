@@ -63,6 +63,9 @@ var Source = (function () {
         setMessageContents: function (value) {
             source.contents = value;
         },
+        resetMessageSelections: function () {
+            source.selections = [];
+        },
         send: function () {
             source.selections = [];
             $('#tab-version').html(Monto.toHtmlString(source));
@@ -82,6 +85,7 @@ var Source = (function () {
         sendSource: function(source) {
             var sourceMessage = sources[source];
             if (sourceMessage !== undefined && sourceMessage !== null) {
+                $('#tab-version').html(Monto.toHtmlString(sourceMessage));
                 src.send(JSON.stringify(sourceMessage));
                 sourceMessage.id += 1;
                 sources[source] = sourceMessage;
