@@ -26,7 +26,7 @@
                 list.push(content.replacement);
             });
         });
-        Source.resetMessageSelections();
+        Source.resetMessageSelection();
         return {
             list: list,
             from: CodeMirror.Pos(pos.from.line, pos.from.ch),

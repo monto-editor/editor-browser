@@ -19,9 +19,7 @@ var Source = (function () {
         source: 'nofile',
         id: 0,
         language: 'text',
-        invalid: [],
-        contents: '',
-        selections: []
+        contents: ''
     };
 
     var lastSelectionPos = {
@@ -39,9 +37,7 @@ var Source = (function () {
                     source: name,
                     id: 0,
                     language: language,
-                    invalid: [],
-                    contents: contents,
-                    selections: []
+                    contents: contents
                 }
             }
         },
@@ -63,11 +59,10 @@ var Source = (function () {
         setMessageContents: function (value) {
             source.contents = value;
         },
-        resetMessageSelections: function () {
-            source.selections = [];
+        resetMessageSelection: function () {
+            delete source["selection"];
         },
         send: function () {
-            source.selections = [];
             $('#tab-version').html(Monto.toHtmlString(source));
             src.send(JSON.stringify(source));
             source.id += 1;
@@ -77,8 +72,8 @@ var Source = (function () {
             src.send(JSON.stringify(source));
             source.id += 1;
         },
-        sendWithSelections: function (selections) {
-            source.selections = selections;
+        sendWithSelection: function (selection) {
+            source.selection = selection;
             src.send(JSON.stringify(source));
             source.id += 1;
         },
@@ -109,7 +104,7 @@ var Source = (function () {
                     break;
                 }
             }
-            Source.sendWithSelections([{begin: begin, end: end}]);
+            Source.sendWithSelection({offset: begin, length: end-end});
         },
         getLastSelectionPos: function () {
             return lastSelectionPos;

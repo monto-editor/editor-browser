@@ -55,7 +55,7 @@ window.onload = function () {
     });
 
     function openFile(filename, text) {
-        Source.resetMessageSelections();
+        Source.resetMessageSelection();
         Source.setMessageContents(editor.getValue());
         var nameParts = filename.split('.');
         var ending = nameParts.length > 1 ? nameParts[nameParts.length - 1] : 'txt';
@@ -172,7 +172,7 @@ window.onload = function () {
     $(document).on('click', '.file-tab', function (e) {
         e.preventDefault();
         $(this).tab('show');
-        Source.resetMessageSelections();
+        Source.resetMessageSelection();
         Source.setMessageContents(editor.getValue());
         Source.loadSource($(this)[0].text.trim());
         var source = Source.getMessage();
