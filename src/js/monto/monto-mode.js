@@ -33,10 +33,15 @@
                             offset: content.offset,
                             length: content.length
                         });
+                        var style = [];
+                        if(content.font.hasOwnProperty('color')) {
+                            var color = content.font.color;
+                            style.push('color: rgb('+color.red+','+color.green+','+color.blue+')');
+                        }
                         markers.push(editor.markText({line: pos.from.line, ch: pos.from.ch}, {
                             line: pos.to.line,
                             ch: pos.to.ch
-                        }, {className: 'cm-' + content.category}));
+                        }, {css: style.join(',')}));
                     });
                 });
             });
