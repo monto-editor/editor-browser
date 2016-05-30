@@ -84,6 +84,8 @@ var Source = (function () {
                 src.send(JSON.stringify(sourceMessage));
                 sourceMessage.id += 1;
                 sources[source] = sourceMessage;
+            } else {
+                alert("Broker requested source for " + source + ". It was not found. Not answering.");
             }
         },
         setPosAndSend: function () {
