@@ -1,7 +1,7 @@
 var Sink = (function () {
     var sink;
     try {
-        sink = new WebSocket('ws://localhost:5003/');
+        sink = new WebSocket('ws://localhost:5004/');
     } catch (e) {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
         $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
@@ -22,37 +22,49 @@ var Sink = (function () {
     var products = {};
 
     sink.onmessage = function (rawMessage) {
-        if (parse) {
-            if (parseService === "require") {
-                var required = JSON.parse(rawMessage.data);
-                required.required_sources.forEach(function (source) {
-                    Source.sendSource(source);
-                });
-                Source.resend();
-            } else {
-                var message = JSON.parse(rawMessage.data);
-                if (message.product !== undefined) {
-                    processNewProduct(message);
-                }
-            }
-            parse = false;
-            parseService = "";
-        } else if (!skip) {
-            if (rawMessage.data === "require") {
-                parse = true;
-                parseService = rawMessage.data;
-            } else  if (Monto.isServiceEnabled(rawMessage.data.split(' ')[3])) {
-                parse = true;
-                parseService = rawMessage.data.split(' ')[3];
-            } else {
-                skip = true;
-            }
-        } else {
-            skip = false;
+        var msg = JSON.parse(rawMessage.data);
+        switch(msg.tag) {
+        case "product":
+            processNewProduct(msg.contents);
+            break;
+        case "discovery":
+            Discovery.acceptNewDiscoverResponse(msg.contents);
+            break;
+        default:
+            console.log("unrecongnized message type "+msg);
         }
+        // if (parse) {
+        //     if (parseService === "require") {
+        //         var required = JSON.parse(rawMessage.data);
+        //         required.required_sources.forEach(function (source) {
+        //             Source.sendSource(source);
+        //         });
+        //         Source.resend();
+        //     } else {
+        //         var message = JSON.parse(rawMessage.data);
+        //         if (message.product !== undefined) {
+        //             processNewProduct(message);
+        //         }
+        //     }
+        //     parse = false;
+        //     parseService = "";
+        // } else if (!skip) {
+        //     if (rawMessage.data === "require") {
+        //         parse = true;
+        //         parseService = rawMessage.data;
+        //     } else  if (Monto.isServiceEnabled(rawMessage.data.split(' ')[3])) {
+        //         parse = true;
+        //         parseService = rawMessage.data.split(' ')[3];
+        //     } else {
+        //         skip = true;
+        //     }
+        // } else {
+        //     skip = false;
+        // }
     };
 
     function processNewProduct(product) {
+        console.log(product);
         product.service_id = parseService;
         var src = product.source;
         var prod = product.product;

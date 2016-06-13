@@ -1,24 +1,4 @@
 var Discovery = (function () {
-    var discovery;
-    try {
-        discovery = new WebSocket('ws://localhost:5006/');
-    } catch (e) {
-        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
-    }
-    discovery.onerror = function() {
-        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
-    };
-    discovery.onclose = function() {
-        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
-    };
-
-    discovery.onmessage = function (rawMessage) {
-        acceptNewDiscoverResponse(JSON.parse(rawMessage.data));
-    };
-
     var discoverReq = {
         discover_services: []
     };
@@ -125,7 +105,11 @@ var Discovery = (function () {
             var panel = $('#options-' + service.service_id);
             var serviceConfig = [];
             if (service.options.length > 0) {
-                var content = parseConfigurationOptions(service.options, service, serviceConfig, []);
+                var content = '<div id="options-'+service.service_id+'" class="panel panel-primary panel-default cm-s-monto">' +
+                    '<div class="panel-heading">' + service.label + '</div>' +
+                    '<div class="panel-body">' +
+                    parseConfigurationOptions(service.options, service, serviceConfig, []) +
+                    '</div></div>';
                 if (panel.length === 0) {
                     $('#options').append(content);
                 }
@@ -136,26 +120,27 @@ var Discovery = (function () {
 
     function parseConfigurationOptions(options, service, serviceConfig, required_options) {
         if (options !== undefined && options !== null) {
-            var content = '<div id="options-' + service.service_id + '" class="panel panel-primary panel-default cm-s-monto"><div class="panel-body">';
+            var content = '';
             options.forEach(function (option) {
                 var id = service.service_id + '-' + option.option_id;
                 var config = localStorage.getItem(id);
                 var value;
-                var disabled = '';
-                if (required_options !== null && required_options !== undefined && required_options.length > 0) {
-                    var acc = true;
-                    required_options.forEach(function (required_option) {
-                        acc = 'true' === localStorage.getItem(service.service_id + '-' + required_option) && acc;
-                        $(document).on('change', '#' + service.service_id + '-' + required_option, function (e) {
-                            if (e.target.checked) {
-                                $('#' + id).prop('disabled', false);
-                            } else {
-                                $('#' + id).prop('disabled', true);
-                            }
-                        });
-                    });
-                    disabled = acc ? '' : 'disabled';
-                }
+                // var disabled = '';
+                // if (required_options !== null && required_options !== undefined && required_options.length > 0) {
+                //     var acc = true;
+                //     required_options.forEach(function (required_option) {
+                //         acc = 'true' === localStorage.getItem(service.service_id + '-' + required_option) && acc;
+                //         $(document).on('change', '#' + service.service_id + '-' + required_option, function (e) {
+                //             if (e.target.checked) {
+                //                 $('#' + id).prop('disabled', false);
+                //             } else {
+                //                 $('#' + id).prop('disabled', true);
+                //             }
+                //         });
+                //     });
+                //     disabled = acc ? '' : 'disabled';
+                // }
+                disabled = false;
                 if (option.type === "number") {
                     value = (config === null || config === undefined || config === '') ? option.default_value : parseInt(config);
                     content += buildNumberOption(config, option, id, disabled, value);
@@ -176,7 +161,7 @@ var Discovery = (function () {
                     serviceConfig.push({option_id: option.option_id, value: value});
                 }
             });
-            content += '</div></div>';
+            content;
             return content;
         }
     }
@@ -235,7 +220,11 @@ var Discovery = (function () {
 
     function buildGroupOption(option, required_options, service, serviceConfig) {
         required_options.push(option.required_option);
-        var content = parseConfigurationOptions(option.members, service, serviceConfig, required_options);
+        var content = '<div class="panel panel-primary panel-default cm-s-monto">' +
+            '<div class="panel-heading">' + option.label + '</div>' +
+            '<div class="panel-body">' +
+            parseConfigurationOptions(option.members, service, serviceConfig, required_options) +
+            '</div></div>';
         var index = required_options.indexOf(option.required_option);
         if (index > -1) {
             required_options.splice(index, 1);
@@ -244,8 +233,9 @@ var Discovery = (function () {
     }
 
     return {
+        acceptNewDiscoverResponse: acceptNewDiscoverResponse,
         discoverServices: function () {
-            discovery.send(JSON.stringify(discoverReq));
+            Source.sendDiscoverMessage(discoverReq);
             $('#discoverRequest').html(Monto.toHtmlString(discoverReq));
         },
         setOptionsLanguage: function (language) {

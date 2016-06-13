@@ -1,19 +1,4 @@
 var Configuration = (function () {
-    var configuration;
-    try {
-        configuration = new WebSocket('ws://localhost:5008/');
-    } catch (e) {
-        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
-    }
-    configuration.onerror = function () {
-        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
-    };
-    configuration.onclose = function () {
-        $('#con-btn').removeClass('btn-success').addClass('btn-danger');
-        $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
-    };
 
     var configurationMsg = {
         configure_services: []
@@ -38,8 +23,8 @@ var Configuration = (function () {
             });
         },
         configureServices: function () {
-            configuration.send(JSON.stringify(configurationMsg));
-            $('#tab-configuration').html(Monto.toHtmlString(configurationMsg));
+            Source.sendConfiguration(configurationMsg.configure_services);
+            $('#tab-configuration').html(Monto.toHtmlString(configurationMsg.configure_services));
         }
     }
 })();

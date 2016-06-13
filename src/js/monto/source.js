@@ -1,7 +1,7 @@
 var Source = (function () {
     var src;
     try {
-        src = new WebSocket('ws://localhost:5002/');
+        src = new WebSocket('ws://localhost:5003/');
     } catch (e) {
         $('#con-btn').removeClass('btn-success').addClass('btn-danger');
         $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
@@ -64,12 +64,12 @@ var Source = (function () {
         },
         send: function () {
             $('#tab-version').html(Monto.toHtmlString(source));
-            src.send(JSON.stringify(source));
+            src.send(JSON.stringify({tag:"source",contents:source}));
             source.id += 1;
         },
         resend: function () {
             $('#tab-version').html(Monto.toHtmlString(source));
-            src.send(JSON.stringify(source));
+            src.send(JSON.stringify({tag:"source",contents:source}));
             source.id += 1;
         },
         sendWithSelection: function (selection) {
@@ -77,11 +77,17 @@ var Source = (function () {
             src.send(JSON.stringify(source));
             source.id += 1;
         },
+        sendConfiguration: function(config) {
+            src.send(JSON.stringify({tag:"configuration",contents:config}))
+        },
+        sendDiscoverMessage: function(discover) {
+            src.send(JSON.stringify({tag:"discovery",contents:discover}))
+        },
         sendSource: function(source) {
             var sourceMessage = sources[source];
             if (sourceMessage !== undefined && sourceMessage !== null) {
                 $('#tab-version').html(Monto.toHtmlString(sourceMessage));
-                src.send(JSON.stringify(sourceMessage));
+                src.send(JSON.stringify({tag:"source",contents:sourceMessage}));
                 sourceMessage.id += 1;
                 sources[source] = sourceMessage;
             } else {
