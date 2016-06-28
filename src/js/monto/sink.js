@@ -15,9 +15,6 @@ var Sink = (function () {
         $('#con-glyph').removeClass('fa-check').addClass('fa fa-remove');
     };
 
-    var parse = false;
-    var skip = false;
-    var parseService = "";
     var triggerFunction = {};
     var products = {};
 
@@ -33,38 +30,9 @@ var Sink = (function () {
         default:
             console.log("unrecongnized message type "+msg);
         }
-        // if (parse) {
-        //     if (parseService === "require") {
-        //         var required = JSON.parse(rawMessage.data);
-        //         required.required_sources.forEach(function (source) {
-        //             Source.sendSource(source);
-        //         });
-        //         Source.resend();
-        //     } else {
-        //         var message = JSON.parse(rawMessage.data);
-        //         if (message.product !== undefined) {
-        //             processNewProduct(message);
-        //         }
-        //     }
-        //     parse = false;
-        //     parseService = "";
-        // } else if (!skip) {
-        //     if (rawMessage.data === "require") {
-        //         parse = true;
-        //         parseService = rawMessage.data;
-        //     } else  if (Monto.isServiceEnabled(rawMessage.data.split(' ')[3])) {
-        //         parse = true;
-        //         parseService = rawMessage.data.split(' ')[3];
-        //     } else {
-        //         skip = true;
-        //     }
-        // } else {
-        //     skip = false;
-        // }
     };
 
     function processNewProduct(product) {
-        console.log(product);
         var src = product.source;
         var prod = product.product;
         var productForSource = products[src];
