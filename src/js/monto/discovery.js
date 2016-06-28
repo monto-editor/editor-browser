@@ -103,22 +103,22 @@ var Discovery = (function () {
         var configMsg = Configuration.getConfigurationMessage();
         Monto.getAvailableServices().forEach(function (service) {
             var panel = $('#options-' + service.service_id);
-            var serviceConfig = [];
+            var serviceSettings = [];
             if (service.options.length > 0) {
                 var content = '<div id="options-'+service.service_id+'" class="panel panel-primary panel-default cm-s-monto">' +
                     '<div class="panel-heading">' + service.label + '</div>' +
                     '<div class="panel-body">' +
-                    parseConfigurationOptions(service.options, service, serviceConfig, []) +
+                    parseConfigurationOptions(service.options, service, serviceSettings, []) +
                     '</div></div>';
                 if (panel.length === 0) {
                     $('#options').append(content);
                 }
-                configMsg.configure_services.push({service_id: service.service_id, configurations: serviceConfig});
+                configMsg.configure_services.push({service_id: service.service_id, settings: serviceSettings});
             }
         });
     }
 
-    function parseConfigurationOptions(options, service, serviceConfig, required_options) {
+    function parseConfigurationOptions(options, service, serviceSettings, required_options) {
         if (options !== undefined && options !== null) {
             var content = '';
             options.forEach(function (option) {
@@ -154,11 +154,11 @@ var Discovery = (function () {
                     value = (config === null || config === undefined || config === '') ? option.default_value : config;
                     content += buildXorOption(config, option, id, disabled, value);
                 } else if (option.type === undefined && option.members !== undefined) {
-                    content += buildGroupOption(option, required_options, service, serviceConfig);
+                    content += buildGroupOption(option, required_options, service, serviceSettings);
                 }
 
                 if (option.type !== undefined && option.members === undefined) {
-                    serviceConfig.push({option_id: option.option_id, value: value});
+                    serviceSettings.push({option_id: option.option_id, value: value});
                 }
             });
             content;
@@ -218,12 +218,12 @@ var Discovery = (function () {
         return content;
     }
 
-    function buildGroupOption(option, required_options, service, serviceConfig) {
+    function buildGroupOption(option, required_options, service, serviceSettings) {
         required_options.push(option.required_option);
         var content = '<div class="panel panel-primary panel-default cm-s-monto">' +
             '<div class="panel-heading">' + option.label + '</div>' +
             '<div class="panel-body">' +
-            parseConfigurationOptions(option.members, service, serviceConfig, required_options) +
+            parseConfigurationOptions(option.members, service, serviceSettings, required_options) +
             '</div></div>';
         var index = required_options.indexOf(option.required_option);
         if (index > -1) {

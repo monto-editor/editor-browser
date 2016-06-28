@@ -14,9 +14,9 @@ var Configuration = (function () {
         setConfiguration: function (serviceID, optionID, value) {
             configurationMsg.configure_services.forEach(function (service) {
                 if (service.service_id === serviceID) {
-                    service.configurations.forEach(function (config) {
-                        if (config.option_id === optionID) {
-                            config.value = value;
+                    service.settings.forEach(function (setting) {
+                        if (setting.option_id === optionID) {
+                            setting.value = value;
                         }
                     });
                 }
