@@ -65,7 +65,6 @@ var Sink = (function () {
 
     function processNewProduct(product) {
         console.log(product);
-        product.service_id = parseService;
         var src = product.source;
         var prod = product.product;
         var productForSource = products[src];
