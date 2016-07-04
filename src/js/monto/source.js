@@ -74,7 +74,7 @@ var Source = (function () {
         },
         sendWithSelection: function (selection) {
             source.selection = selection;
-            src.send(JSON.stringify(source));
+            src.send(JSON.stringify({tag:"source",contents:source}));
             source.id += 1;
         },
         sendConfiguration: function(config) {
