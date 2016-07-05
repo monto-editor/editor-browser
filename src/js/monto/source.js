@@ -77,8 +77,8 @@ var Source = (function () {
             src.send(JSON.stringify({tag:"source",contents:source}));
             source.id += 1;
         },
-        sendConfiguration: function(config) {
-            src.send(JSON.stringify({tag:"configuration",contents:config}))
+        sendConfigurations: function(configs) {
+            src.send(JSON.stringify({tag:"configurations",contents:configs}))
         },
         sendDiscoverMessage: function(discover) {
             src.send(JSON.stringify({tag:"discovery",contents:discover}))

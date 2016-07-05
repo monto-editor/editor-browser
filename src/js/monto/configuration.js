@@ -23,7 +23,7 @@ var Configuration = (function () {
             });
         },
         configureServices: function () {
-            Source.sendConfiguration(configurationMsg.configure_services);
+            Source.sendConfigurations(configurationMsg.configure_services);
             $('#tab-configuration').html(Monto.toHtmlString(configurationMsg.configure_services));
         }
     }
