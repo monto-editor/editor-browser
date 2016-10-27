@@ -34,7 +34,10 @@ var Source = (function () {
             var lookup = sources[name];
             if (lookup === undefined || lookup === null) {
                 sources[name] = {
-                    source: name,
+                    source: {
+                        physical_name: name,
+                        logical_name: null
+                    },
                     id: 0,
                     language: language,
                     contents: contents
@@ -52,6 +55,23 @@ var Source = (function () {
         },
         getMessage: function () {
             return source;
+        },
+        /*
+         Sadly {physical_name: "Test", logical_name: null} === {physical_name: "Test", logical_name: null}
+         evaluates to false. So objects can't be compared with === or ==. To compare two sources,
+         you must use Source.equals(src1, src2).
+
+            var dict = {}
+            dict[{physical_name: "Test", logical_name: null}] = 1
+            dict[{physical_name: "Test", logical_name: null}] = 2
+         Strangely dict now has only one key/value pair and dict[{physical_name: "Test", logical_name: null}] has value 2.
+         So usage of objects in dictonaries works without special comparisons, but for now includes the also logical_name.
+        */
+        equals: function (firstSrc, secondSrc) {
+            // to compare all attributes:
+            // return JSON.stringify(src1) === JSON.stringify(src2)
+            // but for now identity on Sources only includes the physical_name
+            return firstSrc.physical_name === secondSrc.physical_name;
         },
         setMessageLanguage: function (value) {
             source.language = value;

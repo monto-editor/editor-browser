@@ -41,7 +41,7 @@ var FileGraph = (function () {
         data.edges = [];
         var products = Sink.getActiveProductsByType('filegraph');
         products.forEach(function (product) {
-            if (product.source === Source.getMessage().source) {
+            if (Source.equals(product.source, Source.getMessage().source)) {
                 var files = product.contents;
                 files.forEach(function (file) {
                     var name = file.file_name;
